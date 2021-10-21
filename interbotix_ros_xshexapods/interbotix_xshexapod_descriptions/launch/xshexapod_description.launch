@@ -4,7 +4,7 @@
   <arg name="robot_name"                        default="$(arg robot_model)"/>
   <arg name="external_urdf_loc"                 default=""/>
   <arg name="load_gazebo_configs"               default="false"/>
-  <arg name="use_joint_pub"                     default="false"/>
+  <arg name="use_joint_pub"                     default="true"/>
   <arg name="use_joint_pub_gui"                 default="false"/>
   <arg name="use_rviz"                          default="true"/>
   <arg name="rviz_frame"                        default="$(arg robot_name)/base_bottom_link"/>

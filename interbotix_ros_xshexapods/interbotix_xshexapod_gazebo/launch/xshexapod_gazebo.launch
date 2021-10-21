@@ -3,9 +3,9 @@
   <arg name="robot_model"                       default=""/>
   <arg name="robot_name"                        default="$(arg robot_model)"/>
   <arg name="external_urdf_loc"                 default=""/>
-  <arg name="use_rviz"                          default="false"/>
+  <arg name="use_rviz"                          default="true"/>
   <arg name="rviz_frame"                        default="$(arg robot_name)/base_bottom_link"/>
-  <arg name="world_name"                        default="$(find interbotix_xshexapod_gazebo)/worlds/xshexapod_gazebo.world"/>
+  <arg name="world_name"                        default="$(find interbotix_xshexapod_gazebo)/worlds/mesh.world"/>
   <arg name="gui"                               default="true"/>
   <arg name="debug"                             default="false"/>
   <arg name="paused"                            default="true"/>
