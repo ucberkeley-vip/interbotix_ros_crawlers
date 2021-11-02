@@ -7,6 +7,7 @@ from interbotix_xs_modules.hexapod import InterbotixHexapodXS
 
 GOLD = 0xD4AF37
 
+
 def main():
     # Instantiate an instance of the hexapod (goes to the default Home Pose when done)
     bot = InterbotixHexapodXS('pxmark4')
@@ -31,7 +32,7 @@ def main():
     foot_points = bot.hex.get_foot_points()
 
     # Set them to be the new 'Home Pose' foot points...
-    bot.hex.set_home_foot_points(foot_points)
+    bot.hex.set_home_foot_points("all", foot_points)
 
     # And confirm that when you execute the following command, the hexapod doesn't move...
     bot.hex.reset_hexapod("home")
@@ -41,7 +42,7 @@ def main():
     bot.hex.move_in_world(x_stride=0.08, gait_type="ripple", num_cycles=5)
 
     # Now make the hexapod walk backwards using the wave gait the same distance.
-    bot.hex.move_in_world(x_stride=-0.08, gait_type="wave", num_cyles=5)
+    bot.hex.move_in_world(x_stride=-0.08, gait_type="wave", num_cycles=5)
 
     # Set the LEDs to both be gold for no good reason, just cuz...
     bot.pixels.set_color(color=GOLD, set_all_leds=True)
@@ -49,5 +50,6 @@ def main():
     # Go to sleep :)
     bot.hex.reset_hexapod("sleep")
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main()
