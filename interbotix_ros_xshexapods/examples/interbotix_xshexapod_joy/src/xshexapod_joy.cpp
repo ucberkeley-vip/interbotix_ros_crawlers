@@ -75,9 +75,9 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
     joy_cmd.move_type_cmd = 33; //interbotix_xs_msgs::HexJoy::MOVE_HEXAPOD; 
     //TODO: create new HexJoy.MOVE_ALGO_LL in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
   }
-  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 1)
+  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 2)
   {
-    new_move_type = 2;
+    new_move_type = 3;
     joy_cmd.move_type_cmd = 34; // interbotix_xs_msgs::HexJoy::MOVE_HEXAPOD; 
     //TODO: create new HexJoy.MOVE_TURRET in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
   }

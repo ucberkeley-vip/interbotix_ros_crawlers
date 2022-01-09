@@ -191,10 +191,7 @@ class HexapodRobot(object):
 
     ## @brief Control loop for moving the hexapod
     def controller(self):
-        with self.joy_mutex:
-            msg = copy.deepcopy(self.joy_msg)
-
-        if (self.move_type == "move_hexapod"):
+        def move_hexapod_helper(self, msg):
             place_position_changed = sum([msg.place_x_cmd, msg.place_y_cmd, msg.place_z_cmd]) > 0
             place_orientation_changed = sum([msg.place_roll_cmd, msg.place_pitch_cmd]) > 0
             world_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd]) > 0
@@ -226,7 +223,7 @@ class HexapodRobot(object):
                     yaw_stride = -self.yaw_stride
 
                 self.hexbot.hex.move_in_world(x_stride, y_stride, yaw_stride, self.max_foot_height, self.num_steps, self.current_gait, self.move_step_time, self.accel_step_time, cycle_freq=self.current_loop_rate)
-
+            
             elif (place_position_changed or place_orientation_changed):
                 T_fb = self.hexbot.hex.get_body_pose()
                 rpy = ang.rotationMatrixToEulerAngles(T_fb[:3,:3])
@@ -250,6 +247,12 @@ class HexapodRobot(object):
 
                 self.hexbot.hex.move_in_place(T_fb[0,3], T_fb[1,3], T_fb[2,3], rpy[0], rpy[1], rpy[2], self.move_step_time, self.accel_step_time, False)
 
+        with self.joy_mutex:
+            msg = copy.deepcopy(self.joy_msg)
+
+        if (self.move_type == "move_hexapod"):
+            move_hexapod_helper(self, msg)
+            
         elif (self.move_type == "move_leg"):
             leg_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_z_cmd]) > 0
             if (leg_position_changed):
@@ -267,18 +270,11 @@ class HexapodRobot(object):
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
-            turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_pitch_cmd]) > 0
-            if (turret_position_changed):
-                command = [0, 0, 0]
-                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = self.translate_step
-                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = -self.translate_step
-
-                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = self.translate_step
-                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -self.translate_step
-
-                if (self.joy_msg.place_pitch_cmd == HexJoy.PLACE_PITCH_DOWN): command[2] = self.translate_step
-                elif (self.joy_msg.place_z_cmd == HexJoy.PLACE_PITCH_UP): command[2] = -self.translate_step
-            pass
+            move_hexapod_helper(self, msg)
+            #msg.world_y_cmd contains the left joystick left/right axis
+            #msg.world_x_cmd contains the left joystick up/down axis
+            #msg.place_y_cmd contains the right joystick left/right axis
+            #msg.place_x_cmd contains the right joystick up/down axis
 
 def main():
     rospy.init_node("xshexapod_robot")
