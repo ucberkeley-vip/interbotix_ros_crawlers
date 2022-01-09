@@ -148,25 +148,25 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
    joy_cmd.pose_cmd = interbotix_xs_msgs::HexJoy::SLEEP_POSE;
 
   // Check the gait_toggle_cmd
-  if (msg.buttons.at(cntlr["NEXT"]) == 1 && flip_move_type_cmd == false)
+  if (msg.buttons.at(cntlr["NEXT"]) == 1 && new_move_type == 0)
    joy_cmd.gait_toggle_cmd = interbotix_xs_msgs::HexJoy::GAIT_NEXT;
-  else if (msg.buttons.at(cntlr["PREVIOUS"]) == 1 && flip_move_type_cmd == false)
+  else if (msg.buttons.at(cntlr["PREVIOUS"]) == 1 && new_move_type == 0)
    joy_cmd.gait_toggle_cmd = interbotix_xs_msgs::HexJoy::GAIT_PREVIOUS;
 
   // Check the leg_toggle_cmd
-  if (msg.buttons.at(cntlr["NEXT"]) == 1 && flip_move_type_cmd == true)
+  if (msg.buttons.at(cntlr["NEXT"]) == 1 && new_move_type == 1)
    joy_cmd.leg_toggle_cmd = interbotix_xs_msgs::HexJoy::LEG_NEXT;
-  else if (msg.buttons.at(cntlr["PREVIOUS"]) == 1 && flip_move_type_cmd == true)
+  else if (msg.buttons.at(cntlr["PREVIOUS"]) == 1 && new_move_type == 1)
    joy_cmd.leg_toggle_cmd = interbotix_xs_msgs::HexJoy::LEG_PREVIOUS;
 
   // Check the stance_cmd
-  if (msg.buttons.at(cntlr["WIDEN_STANCE"]) == 1 && flip_move_type_cmd == false)
+  if (msg.buttons.at(cntlr["WIDEN_STANCE"]) == 1 && new_move_type == 0)
     joy_cmd.stance_cmd = interbotix_xs_msgs::HexJoy::WIDEN_STANCE;
-  else if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && flip_move_type_cmd == false)
+  else if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && new_move_type == 0)
     joy_cmd.stance_cmd = interbotix_xs_msgs::HexJoy::NARROW_STANCE;
 
   // Check the reboot_cmd
-  if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && flip_move_type_cmd == true)
+  if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && new_move_type == 1)
     joy_cmd.reboot_cmd = interbotix_xs_msgs::HexJoy::REBOOT_MOTORS;
 
   // Check the set_home_pose_cmd
@@ -222,7 +222,7 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
      prev_joy_cmd.speed_toggle_cmd == joy_cmd.speed_toggle_cmd)) {
        pub_joy_cmd.publish(joy_cmd);
      }
-     
+
   prev_move_type = new_move_type;
   prev_joy_cmd = joy_cmd;
 }
