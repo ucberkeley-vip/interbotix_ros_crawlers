@@ -51,30 +51,43 @@ double threshold;                                           // Joystick sensitiv
 std::string controller_type;                                // Holds the name of the controller received from the ROS Parameter server
 std::map<std::string, int> cntlr;                           // Holds the controller button mappings
 interbotix_xs_msgs::HexJoy prev_joy_cmd;              // Keep track of the previously commanded HexJoy message so that only unique messages are published
+int prev_move_type = 0;                               //keep track of the previous control type, so we can switch between the 4 modes
 
 /// @brief Joystick callback to create custom HexJoy messages to control the Hexapod
 /// @param msg - raw sensor_msgs::Joy data
 void joy_state_cb(const sensor_msgs::Joy &msg)
 {
-  static bool flip_move_type_cmd = false;
-  static bool flip_move_type_cmd_last_state = false;
+  static int new_move_type = 0; //0-3 are legal modes
+  
   static bool flip_in_place_cmd = false;
   static bool flip_in_place_cmd_last_state = false;
   interbotix_xs_msgs::HexJoy joy_cmd;
 
   // Check if the move_type_cmd should be flipped
-  if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && flip_move_type_cmd_last_state == false)
+  if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 0)
   {
-    flip_move_type_cmd = true;
+    new_move_type = 1;
     joy_cmd.move_type_cmd = interbotix_xs_msgs::HexJoy::MOVE_LEG;
   }
-  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && flip_move_type_cmd_last_state == true)
+  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 1)
   {
-    flip_move_type_cmd = false;
+    new_move_type = 2;
+    joy_cmd.move_type_cmd = 33; //interbotix_xs_msgs::HexJoy::MOVE_HEXAPOD; 
+    //TODO: create new HexJoy.MOVE_ALGO_LL in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
+  }
+  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 1)
+  {
+    new_move_type = 2;
+    joy_cmd.move_type_cmd = 34; // interbotix_xs_msgs::HexJoy::MOVE_HEXAPOD; 
+    //TODO: create new HexJoy.MOVE_TURRET in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
+  }
+  else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 1 && prev_move_type == 3)
+  {
+    new_move_type = 0;
     joy_cmd.move_type_cmd = interbotix_xs_msgs::HexJoy::MOVE_HEXAPOD;
   }
   else if (msg.buttons.at(cntlr["MOVE_TYPE"]) == 0)
-    flip_move_type_cmd_last_state = flip_move_type_cmd;
+    new_move_type = prev_move_type;
 
   // Check if the flip_in_place_cmd should be flipped
   if (msg.buttons.at(cntlr["FLIP_IN_PLACE_MODE"]) == 1 && flip_in_place_cmd_last_state == false)
@@ -206,8 +219,11 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
      prev_joy_cmd.reboot_cmd == joy_cmd.reboot_cmd &&
      prev_joy_cmd.set_home_pose_cmd == joy_cmd.set_home_pose_cmd &&
      prev_joy_cmd.speed_cmd == joy_cmd.speed_cmd &&
-     prev_joy_cmd.speed_toggle_cmd == joy_cmd.speed_toggle_cmd))
-     pub_joy_cmd.publish(joy_cmd);
+     prev_joy_cmd.speed_toggle_cmd == joy_cmd.speed_toggle_cmd)) {
+       pub_joy_cmd.publish(joy_cmd);
+     }
+     
+  prev_move_type = new_move_type;
   prev_joy_cmd = joy_cmd;
 }
 

@@ -141,6 +141,16 @@ class HexapodRobot(object):
             rospy.loginfo("Move Leg mode toggled. Current leg is %s." % self.current_leg)
             self.hexbot.pixels.set_color(color=self.led_states["leg"], set_all_leds=True)
             self.update_leg(self.leg_list.index(self.current_leg))
+        elif (msg.move_type_cmd == 33): #HexJoy.MOVE_ALGO_LL): 
+            #TODO: create HexJoy.MOVE_ALGO_LL
+            self.move_type = "move_algo_ll"
+            rospy.loginfo("Move_algo_LL mode toggled.")
+            pass
+        elif (msg.move_type_cmd == 34): #HexJoy.MOVE_TURRET): 
+            #TODO: create HexJoy.MOVE_TURRET in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
+            self.move_type = "move_turret"
+            rospy.loginfo("Move turret mode toggled.")
+            pass
 
         # Check the pose_cmd
         if (msg.pose_cmd == HexJoy.HOME_POSE):
@@ -254,6 +264,21 @@ class HexapodRobot(object):
                 elif (self.joy_msg.place_z_cmd == HexJoy.PLACE_Z_DEC): command[2] = -self.translate_step
 
                 self.hexbot.hex.move_leg(self.current_leg, command, self.move_step_time, self.accel_step_time, False)
+        elif (self.move_type == "move_algo_ll"):
+            pass
+        elif (self.move_type == "move_turret"):
+            turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_pitch_cmd]) > 0
+            if (turret_position_changed):
+                command = [0, 0, 0]
+                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = self.translate_step
+                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = -self.translate_step
+
+                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = self.translate_step
+                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -self.translate_step
+
+                if (self.joy_msg.place_pitch_cmd == HexJoy.PLACE_PITCH_DOWN): command[2] = self.translate_step
+                elif (self.joy_msg.place_z_cmd == HexJoy.PLACE_PITCH_UP): command[2] = -self.translate_step
+            pass
 
 def main():
     rospy.init_node("xshexapod_robot")
