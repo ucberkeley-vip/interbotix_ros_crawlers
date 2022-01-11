@@ -13,7 +13,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>/home/rcadit/Downloads/joist.dae</uri></mesh>
+            <mesh><uri>model://interbotix_xshexapod_gazebo/meshes/joist.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
