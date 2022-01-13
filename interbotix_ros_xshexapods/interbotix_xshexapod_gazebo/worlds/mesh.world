@@ -7,15 +7,29 @@
     <include>
       <uri>model://sun</uri>
     </include>
-    <model name="my_mesh">
-      <pose>2.5 0 0  0 0 1.5707</pose>
+    <model name="joist">
+      <pose>2.3 0 0  0 0 1.5707</pose>
       <static>true</static>
-      <link name="body">
+      <link name="base">
+        <inertial>
+          <mass>30</mass>
+        </inertial>
         <visual name="visual">
           <geometry>
             <mesh><uri>model://interbotix_xshexapod_gazebo/meshes/joist.dae</uri></mesh>
           </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+          </material>
         </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>model://interbotix_xshexapod_gazebo/meshes/joist.dae</uri></mesh>
+          </geometry>
+        </collision>
       </link>
     </model>
   </world>

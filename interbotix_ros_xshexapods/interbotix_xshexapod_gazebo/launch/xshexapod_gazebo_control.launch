@@ -88,6 +88,7 @@
       <param name="motor_configs"                   value="$(arg motor_configs)"/>
       <param name="mode_configs"                    value="$(arg mode_configs)"/>
       <param name="load_configs"                    value="$(arg load_configs)"/>
+      <remap from="/$(arg robot_name)/joint_states" to="/$(arg robot_name)/desired_joint_states" if="$(arg use_gazebo)"/>
   </node>       
 
 </launch>
