@@ -148,12 +148,12 @@
   </xacro:macro>
 
   <!-- Added to fix warning that root link can't have inertia in KDL -->
-  <link name="root"/>
+  <!-- <link name="root"/>
   <joint name="dummy_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="root"/>
     <child link="$(arg robot_name)/base_link"/>
-  </joint>
+  </joint> -->
 
   <link name="$(arg robot_name)/base_link">
     <visual>
