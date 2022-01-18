@@ -1,4 +1,11 @@
 groups:
+  turret_group:
+    operating_mode: ext_position
+    profile_type: time
+    profile_velocity: 1000
+    profile_acceleration: 250
+    torque_enable: true
+    
   left_back:
     operating_mode: position
     profile_type: time
