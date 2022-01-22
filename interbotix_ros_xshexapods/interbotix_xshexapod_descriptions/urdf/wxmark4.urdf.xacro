@@ -15,6 +15,142 @@
     <texture filename="package://interbotix_xshexapod_descriptions/meshes/interbotix_black.png"/>
   </material>
 
+  <joint name="turret_rot" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="3" lower="${radians(-90)}" upper="${radians(90)}" velocity="${pi}"/>
+    <origin rpy="0 0 0" xyz="0 0 .23"/>
+    <parent link="${robot_name}/base_link"/>
+    <child link="${robot_name}/turret_rot_link"/>
+  </joint>
+
+  <transmission name="trans_turret_rot">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="$turret_rot">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="$turret_rot_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <link name="${robot_name}/turret_rot_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.23"/>
+      </geometry>
+      <material name="interbotix_black"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.23"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_ext" type="prismatic">
+    <axis xyz="1 0 0"/>
+    <limit effort="3" lower="0" upper=".25" velocity="1"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="${robot_name}/turret_rot_link"/>
+    <child link="${robot_name}/turret_ext_link"/>
+  </joint>
+
+  <transmission name="trans_turret_ext">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="$turret_ext">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="$turret_ext_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <link name="${robot_name}/turret_ext_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.15"/>
+      </geometry>
+      <material name="interbotix_black"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.15"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_tilt" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit effort="3" lower="${radians(-60)}" upper="${radians(60)}" velocity="1"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="${robot_name}/turret_ext_link"/>
+    <child link="${robot_name}/turret_tilt_link"/>
+  </joint>
+
+  <transmission name="trans_turret_tilt">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="$turret_tilt">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="$turret_tilt_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <link name="${robot_name}/turret_tilt_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.23"/>
+      </geometry>
+      <material name="interbotix_black"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".05" length="0.23"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_pinch" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <limit effort="3" lower="0" upper=".005" velocity="1"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="${robot_name}/turret_tilt_link"/>
+    <child link="${robot_name}/turret_pinch_link"/>
+  </joint>
+
+  <transmission name="trans_turret_pinch">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="$turret_tilt">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="$turret_pinch_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <link name="${robot_name}/turret_pinch_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".01" length="0.01"/>
+      </geometry>
+      <material name="interbotix_black"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius=".01" length="0.01"/>
+      </geometry>
+    </collision>
+  </link>
+
   <xacro:macro name="leg" params="robot_name prefix x y yaw">
 
     <joint name="${prefix}_coxa" type="revolute">
