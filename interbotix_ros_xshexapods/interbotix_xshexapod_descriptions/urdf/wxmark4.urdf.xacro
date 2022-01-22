@@ -25,10 +25,10 @@
 
   <transmission name="trans_turret_rot">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="$turret_rot">
+    <joint name="turret_rot">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="$turret_rot_motor">
+    <actuator name="turret_rot_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -59,10 +59,10 @@
 
   <transmission name="trans_turret_ext">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="$turret_ext">
+    <joint name="turret_ext">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="$turret_ext_motor">
+    <actuator name="turret_ext_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -93,10 +93,10 @@
 
   <transmission name="trans_turret_tilt">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="$turret_tilt">
+    <joint name="turret_tilt">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="$turret_tilt_motor">
+    <actuator name="turret_tilt_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -127,10 +127,10 @@
 
   <transmission name="trans_turret_pinch">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="$turret_tilt">
+    <joint name="turret_tilt">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="$turret_pinch_motor">
+    <actuator name="turret_pinch_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
