@@ -3,6 +3,7 @@
 import rospy
 import copy
 import threading
+import numpy as np
 from interbotix_xs_msgs.msg import HexJoy
 from interbotix_common_modules import angle_manipulation as ang
 from interbotix_xs_modules.hexapod import InterbotixHexapodXS
@@ -142,12 +143,12 @@ class HexapodRobot(object):
             rospy.loginfo("Move Leg mode toggled. Current leg is %s." % self.current_leg)
             self.hexbot.pixels.set_color(color=self.led_states["leg"], set_all_leds=True)
             self.update_leg(self.leg_list.index(self.current_leg))
-        elif (msg.move_type_cmd == 33): #HexJoy.MOVE_ALGO_LL): 
+        elif (msg.move_type_cmd == 33): #HexJoy.MOVE_ALGO_LL):
             #TODO: create HexJoy.MOVE_ALGO_LL
             self.move_type = "move_algo_ll"
             rospy.loginfo("Move_algo_LL mode toggled.")
             pass
-        elif (msg.move_type_cmd == 34): #HexJoy.MOVE_TURRET): 
+        elif (msg.move_type_cmd == 34): #HexJoy.MOVE_TURRET):
             #TODO: create HexJoy.MOVE_TURRET in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
             self.move_type = "move_turret"
             rospy.loginfo("Move turret mode toggled.")
@@ -224,7 +225,7 @@ class HexapodRobot(object):
                     yaw_stride = -self.yaw_stride
 
                 self.hexbot.hex.move_in_world(x_stride, y_stride, yaw_stride, self.max_foot_height, self.num_steps, self.current_gait, self.move_step_time, self.accel_step_time, cycle_freq=self.current_loop_rate)
-            
+
             elif (place_position_changed or place_orientation_changed):
                 T_fb = self.hexbot.hex.get_body_pose()
                 rpy = ang.rotationMatrixToEulerAngles(T_fb[:3,:3])
@@ -253,7 +254,7 @@ class HexapodRobot(object):
 
         if (self.move_type == "move_hexapod"):
             move_hexapod_helper(self, msg)
-            
+
         elif (self.move_type == "move_leg"):
             leg_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_z_cmd]) > 0
             if (leg_position_changed):
@@ -271,7 +272,21 @@ class HexapodRobot(object):
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
-            move_hexapod_helper(self, msg)
+            turret_mv_inc = 5/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
+            #move_hexapod_helper(self, msg)
+            turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_pitch_cmd]) > 0
+            if (turret_position_changed):
+                command = [0, 0, 0]
+                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[2] = turret_mv_inc
+                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[2] = -turret_mv_inc
+
+                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = turret_mv_inc
+                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -turret_mv_inc
+
+                if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[0] = turret_mv_inc
+                elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[0] = -turret_mv_inc
+                self.hexbot.hex.move_turret(command, self.move_step_time, self.accel_step_time, False)
+            pass
             #msg.world_y_cmd contains the left joystick left/right axis
             #msg.world_x_cmd contains the left joystick up/down axis
             #msg.place_y_cmd contains the right joystick left/right axis
