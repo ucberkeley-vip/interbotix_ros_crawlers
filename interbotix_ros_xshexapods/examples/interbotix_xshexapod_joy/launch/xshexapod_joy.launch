@@ -37,7 +37,7 @@
     name="joy_node"
     output="screen"
     ns="$(arg robot_name)">
-    <param name="dev"                             value="/dev/input/js1" />
+    <param name="dev"                             value="/dev/input/js0" />
     <remap from="joy"                             to="commands/joy_raw"/>
   </node>
 
