@@ -272,7 +272,7 @@ class HexapodRobot(object):
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
-            turret_mv_inc = 20/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
+            turret_mv_inc = 10/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
             #move_hexapod_helper(self, msg)
             turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_x_cmd]) > 0
             if (turret_position_changed):
