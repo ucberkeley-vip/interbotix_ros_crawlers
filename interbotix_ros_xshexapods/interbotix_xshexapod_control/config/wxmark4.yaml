@@ -6,11 +6,11 @@ joint_order: [left_back_coxa, left_back_femur, left_back_tibia,
               right_front_coxa, right_front_femur, right_front_tibia,
               right_middle_coxa, right_middle_femur, right_middle_tibia,
               right_back_coxa, right_back_femur, right_back_tibia,
-              turret_rot, turret_ext, turret_tilt]
+              turret_rot, turret_ext, turret_tilt, turret_pinch]
 
 sleep_positions: [0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
                   0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
-                  0, 1.4, -3]
+                  0, 1.4, -3, 0]
 
 joint_state_publisher:
   update_rate: 30
