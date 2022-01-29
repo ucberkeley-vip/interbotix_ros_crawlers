@@ -1,4 +1,11 @@
 groups:
+  pinch_group:
+    operating_mode: ext_position
+    profile_type: time
+    profile_velocity: 1000
+    profile_acceleration: 250
+    torque_enable: true
+
   turret_group:
     operating_mode: ext_position
     profile_type: time
