@@ -273,7 +273,7 @@ class HexapodRobot(object):
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
-            turret_mv_inc = 10/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
+            turret_mv_inc = .001 #10/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
             #move_hexapod_helper(self, msg)
             turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_x_cmd]) > 0
             # WORLD_YAW_CW is the right trigger button, (curr press once for on/off, later want motor to be in open state as long as this button is depressed)
@@ -287,14 +287,14 @@ class HexapodRobot(object):
             if (turret_position_changed):
                 command = [0, 0, 0]
                 if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[2] = -turret_mv_inc # left joystick up/down corresponds to turret_tilt
-                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[2] = turret_mv_inc
+                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[2] = turret_mv_inc # or z pos in space 
 
                 if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[0] = turret_mv_inc # left joystick right/left corresponds to turret_rot
-                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[0] = -turret_mv_inc
+                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[0] = -turret_mv_inc # or x pos in space 
 
-                if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[1] = turret_mv_inc*5 # right joystick corresponds to in/out turret_ext
-                elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[1] = -turret_mv_inc*5 # needs to happen faster than the tilt/rot commands
-                self.hexbot.hex.move_turret(command, self.move_step_time, self.accel_step_time, False)
+                if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[1] = turret_mv_inc #*5 # right joystick corresponds to in/out turret_ext
+                elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[1] = -turret_mv_inc #*5 # needs to happen faster than the tilt/rot commands
+                self.hexbot.hex.move_turret(command, self.move_step_time, self.accel_step_time, False) # or y pos in space 
             pass
             #msg.world_y_cmd contains the left joystick left/right axis
             #msg.world_x_cmd contains the left joystick up/down axis
