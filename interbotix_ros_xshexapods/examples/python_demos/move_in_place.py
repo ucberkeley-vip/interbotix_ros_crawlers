@@ -7,22 +7,21 @@ from interbotix_xs_modules.hexapod import InterbotixHexapodXS
 # To get started, open a terminal and type 'roslaunch interbotix_xshexapod_control xshexapod_control.launch robot_model:=wxmark4'
 # Then change to this directory and type 'python rotate_in_place.py'
 
-
 def main():
-    print("starting")
-    bot = InterbotixHexapodXS('pxmark4')
+
+    bot = InterbotixHexapodXS('wxmark4')
+    bot.hex.move_in_place(z=0.1)
+    bot.hex.modify_stance(-0.02)
 
     # translate in X
-    for step in range(100):
-        print("x")
-        x = 0.05 * step/50
+    for step in range(51):
+        x = 0.05 * math.sin(2*math.pi * step/50.0)
         bot.hex.move_in_place(x=x, moving_time=0.15, blocking=False)
         time.sleep(0.04)
     time.sleep(0.2)
 
     # translate in Y
     for step in range(51):
-        print("y")
         y = 0.05 * math.sin(2*math.pi * step/50.0)
         bot.hex.move_in_place(y=y, moving_time=0.15, blocking=False)
         time.sleep(0.04)
@@ -30,7 +29,6 @@ def main():
 
     # translate in Z
     for step in range(51):
-        print("z")
         z = 0.1 + 0.05 * math.sin(2*math.pi * step/50.0)
         bot.hex.move_in_place(z=z, moving_time=0.15, blocking=False)
         time.sleep(0.04)
@@ -59,6 +57,5 @@ def main():
 
     bot.hex.reset_hexapod('sleep')
 
-
-if __name__ == '__main__':
+if __name__=='__main__':
     main()
