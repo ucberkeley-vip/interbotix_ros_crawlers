@@ -24,7 +24,7 @@ class HexapodRobot(object):
     def __init__(self):
         self.pinch_closed = True
         self.rotate_step = 0.02                                                 # Step size [rad] when rotating the hexapod body in place
-        self.translate_step = 0.007                                             # Step size [meters] when translating the hexapod body or one of its legs in place
+        self.translate_step = 0.004 # from .007                                 # Step size [meters] when translating the hexapod body or one of its legs in place
         self.move_type = "move_hexapod"                                         # Either holds 'move_hexapod' or 'move_leg' modes based on controller input
         self.current_loop_rate = 25                                             # Frequency [Hz] at which the 'controller' function is called per second
         self.current_gait = "tripod"                                            # Currently selected gait
