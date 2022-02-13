@@ -24,7 +24,7 @@ class HexapodRobot(object):
     def __init__(self):
         self.pinch_closed = True
         self.rotate_step = 0.02                                                 # Step size [rad] when rotating the hexapod body in place
-        self.translate_step = 0.004 # from .007                                 # Step size [meters] when translating the hexapod body or one of its legs in place
+        self.translate_step = 0.007                                             # Step size [meters] when translating the hexapod body or one of its legs in place
         self.move_type = "move_hexapod"                                         # Either holds 'move_hexapod' or 'move_leg' modes based on controller input
         self.current_loop_rate = 25                                             # Frequency [Hz] at which the 'controller' function is called per second
         self.current_gait = "tripod"                                            # Currently selected gait
@@ -172,10 +172,12 @@ class HexapodRobot(object):
             self.update_gait(indx)
 
         # Check the stance_cmd
-        if (msg.stance_cmd == HexJoy.WIDEN_STANCE):
+        if (msg.stance_cmd == HexJoy.WIDEN_STANCE and not(self.move_type == "move_turret")):
             self.update_stance(0.01)
         elif (msg.stance_cmd == HexJoy.NARROW_STANCE):
             self.update_stance(-0.01)
+        elif (msg.stance_cmd == HexJoy.WIDEN_STANCE and (self.move_type == "move_turret")): # circle button locks and unlocks pinch in turret mode
+            self.hexbot.hex.change_pinch_lock()
 
         # Check the reboot_cmd
         if (msg.reboot_cmd == HexJoy.REBOOT_MOTORS):
@@ -274,10 +276,11 @@ class HexapodRobot(object):
             pass
         elif (self.move_type == "move_turret"):
             turret_mv_inc = .001 #10/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
-            #move_hexapod_helper(self, msg)
+            pinch_state_changed = (msg.world_yaw_cmd > 0)
             turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_x_cmd]) > 0
-            # WORLD_YAW_CW is the right trigger button, (curr press once for on/off, later want motor to be in open state as long as this button is depressed)
-            if (msg.world_yaw_cmd > 0): # trigger is pulled
+
+            # WORLD_YAW_CW is right trigger button (R2), press and hold for open, release for close
+            if (pinch_state_changed and msg.world_yaw_cmd == HexJoy.WORLD_YAW_CW): # R2 trigger is pulled
                 if (self.pinch_closed == True): # pinch valve is closed 
                     self.pinch_closed = False # flag to open
                     self.hexbot.hex.change_pinch_state(self.move_step_time, self.accel_step_time, False) # command motor to open
