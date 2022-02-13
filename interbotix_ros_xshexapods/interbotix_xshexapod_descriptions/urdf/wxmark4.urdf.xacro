@@ -273,6 +273,7 @@
     <joint name="${prefix}_foot" type="fixed">
       <!-- <origin rpy="0 0 0" xyz="0.095 0 -0.09"/> -->
       <origin rpy="0 0 0" xyz="0.13067 0 -0.1238"/>
+      <!-- <origin rpy="0 0 0" xyz="0.16634 0 -0.1576"/> -->
       <parent link="${robot_name}/${prefix}_tibia_link"/>
       <child link="${robot_name}/${prefix}_foot_link"/>
     </joint>
