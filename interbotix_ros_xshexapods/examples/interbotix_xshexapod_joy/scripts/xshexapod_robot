@@ -24,6 +24,7 @@ BROWN = 0x964B00
 ### @brief Class that allows joystick control of the hexapod and Neopixels
 class HexapodRobot(object):
     def __init__(self):
+        self.light_on = False
         self.pinch_closed = True
         self.rotate_step = 0.02                                                 # Step size [rad] when rotating the hexapod body in place
         self.translate_step = 0.007                                             # Step size [meters] when translating the hexapod body or one of its legs in place
@@ -181,10 +182,17 @@ class HexapodRobot(object):
         # Check the stance_cmd
         if (msg.stance_cmd == HexJoy.WIDEN_STANCE and not(self.move_type == "move_turret")):
             self.update_stance(0.01)
-        elif (msg.stance_cmd == HexJoy.NARROW_STANCE):
+        elif (msg.stance_cmd == HexJoy.NARROW_STANCE and not (self.move_type == "move_turret")):
             self.update_stance(-0.01)
         elif (msg.stance_cmd == HexJoy.WIDEN_STANCE and (self.move_type == "move_turret")): # circle button locks and unlocks pinch in turret mode
             self.hexbot.hex.change_pinch_lock()
+        elif (msg.stance_cmd == HexJoy.NARROW_STANCE and (self.move_type == "move_turret")): # square button turns on lights in turret mode
+            if (self.light_on):
+                GPIO.output(12, GPIO.LOW) #LED light off
+                self.light_on = False
+            else:
+                GPIO.output(12, GPIO.HIGH)
+                self.light_on = True
 
         # Check the reboot_cmd
         if (msg.reboot_cmd == HexJoy.REBOOT_MOTORS):
@@ -282,7 +290,7 @@ class HexapodRobot(object):
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
-            turret_mv_inc = .001 #10/(180*np.pi) # how much turret moves for each input control, currently in radians (without using ik)
+            turret_mv_inc = .002 #20/(180*np.pi) # how much turret moves for each input control
             pinch_state_changed = (msg.world_yaw_cmd > 0)
             turret_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_x_cmd]) > 0
 
@@ -296,15 +304,15 @@ class HexapodRobot(object):
                 self.pinch_closed = True
             if (turret_position_changed):
                 command = [0, 0, 0]
-                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[2] = -turret_mv_inc # left joystick up/down corresponds to turret_tilt
-                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[2] = turret_mv_inc # or z pos in space 
+                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = -turret_mv_inc # left joystick up/down corresponds to x pos in space
+                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = turret_mv_inc
 
-                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[0] = turret_mv_inc # left joystick right/left corresponds to turret_rot
-                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[0] = -turret_mv_inc # or x pos in space 
+                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = turret_mv_inc # left joystick right/left corresponds to y pos in space
+                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -turret_mv_inc
 
-                if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[1] = turret_mv_inc #*5 # right joystick corresponds to in/out turret_ext
-                elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[1] = -turret_mv_inc #*5 # needs to happen faster than the tilt/rot commands
-                self.hexbot.hex.move_turret(command, self.move_step_time, self.accel_step_time, False) # or y pos in space 
+                if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[2] = turret_mv_inc # right joystick corresponds to z pos in space
+                elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[2] = -turret_mv_inc
+                self.hexbot.hex.move_turret(command, self.move_step_time, self.accel_step_time, False)
             pass
             #msg.world_y_cmd contains the left joystick left/right axis
             #msg.world_x_cmd contains the left joystick up/down axis
@@ -312,22 +320,21 @@ class HexapodRobot(object):
             #msg.place_x_cmd contains the right joystick up/down axis
 
 def main():
-    light_on = False
     rospy.init_node("xshexapod_robot")
     hexapod = HexapodRobot()
     # intialize GPIO
-    #GPIO.setmode(GPIO.BOARD)
-    #GPIO.setup(12, GPIO.OUT) # 2x LED lights on front of robot
-    #GPIO.setup(16, GPIO.OUT) # corn bulb light on top of turret
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(12, GPIO.OUT) # 2x LED lights on front of robot
+    GPIO.setup(16, GPIO.OUT) # corn bulb light on top of turret
     #if (light_on):
-    #    GPIO.output(12, GPIO.HIGH)
-    #    GPIO.output(16, GPIO.HIGH)
+    GPIO.output(12, GPIO.LOW)
+    GPIO.output(16, GPIO.LOW)
     while not rospy.is_shutdown():
         hexapod.controller()
         hexapod.rate.sleep()
-    #GPIO.output(12, GPIO.LOW) # turn off LEDs
-    #GPIO.output(16, GPIO.LOW) # turn off corn bulb
-    #GPIO.cleanup() # close gpio ports
+    GPIO.output(12, GPIO.LOW) # turn off LEDs
+    GPIO.output(16, GPIO.LOW) # turn off corn bulb
+    GPIO.cleanup() # close gpio ports
 
 if __name__=='__main__':
     main()

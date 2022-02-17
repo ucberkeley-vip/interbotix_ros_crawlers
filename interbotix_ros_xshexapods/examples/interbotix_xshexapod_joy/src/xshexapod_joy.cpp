@@ -162,7 +162,7 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
   // Check the stance_cmd
   if (msg.buttons.at(cntlr["WIDEN_STANCE"]) == 1 && (new_move_type == 0 || new_move_type == 3))
     joy_cmd.stance_cmd = interbotix_xs_msgs::HexJoy::WIDEN_STANCE;
-  else if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && new_move_type == 0)
+  else if (msg.buttons.at(cntlr["REBOOT_NARROW_STANCE"]) == 1 && (new_move_type == 0 || new_move_type == 3))
     joy_cmd.stance_cmd = interbotix_xs_msgs::HexJoy::NARROW_STANCE;
 
   // Check the reboot_cmd
