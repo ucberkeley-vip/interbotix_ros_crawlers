@@ -112,20 +112,30 @@ class HexapodRobot(object):
             self.joy_msg = copy.deepcopy(msg)
 
         # Check the speed_cmd
-        if (msg.speed_cmd == HexJoy.SPEED_INC and self.current_loop_rate < 40):
-            self.update_speed(self.current_loop_rate + 1)
-        elif (msg.speed_cmd == HexJoy.SPEED_DEC and self.current_loop_rate > 12):
-            self.update_speed(self.current_loop_rate - 1)
+        # if (msg.speed_cmd == HexJoy.SPEED_INC and self.current_loop_rate < 40):
+        #     self.update_speed(self.current_loop_rate + 1)
+        # elif (msg.speed_cmd == HexJoy.SPEED_DEC and self.current_loop_rate > 12):
+        #     self.update_speed(self.current_loop_rate - 1)
 
-        # Check the speed_toggle_cmd
-        if (msg.speed_toggle_cmd == HexJoy.SPEED_COURSE):
-            self.loop_rates["fine"] = self.current_loop_rate
-            rospy.loginfo("Switched to Course Control")
-            self.update_speed(self.loop_rates["course"])
-        elif (msg.speed_toggle_cmd == HexJoy.SPEED_FINE):
-            self.loop_rates["course"] = self.current_loop_rate
-            rospy.loginfo("Switched to Fine Control")
-            self.update_speed(self.loop_rates["fine"])
+        # # Check the speed_toggle_cmd
+        # if (msg.speed_toggle_cmd == HexJoy.SPEED_COURSE):
+        #     self.loop_rates["fine"] = self.current_loop_rate
+        #     rospy.loginfo("Switched to Course Control")
+        #     self.update_speed(self.loop_rates["course"])
+        # elif (msg.speed_toggle_cmd == HexJoy.SPEED_FINE):
+        #     self.loop_rates["course"] = self.current_loop_rate
+        #     rospy.loginfo("Switched to Fine Control")
+        #     self.update_speed(self.loop_rates["fine"])
+
+        # Custom climb buttons
+        if msg.speed_cmd == HexJoy.SPEED_INC:
+            self.walking_node.button1()
+        elif msg.speed_toggle_cmd == HexJoy.SPEED_FINE:
+            self.walking_node.button2()
+        elif msg.speed_cmd == HexJoy.SPEED_DEC:
+            self.walking_node.button3()
+        elif msg.speed_toggle_cmd == HexJoy.SPEED_COURSE:
+            self.walking_node.button4()
 
         # Check the leg_toggle_cmd
         if (msg.leg_toggle_cmd == HexJoy.LEG_NEXT):
