@@ -10,7 +10,7 @@ joint_order: [left_back_coxa, left_back_femur, left_back_tibia,
 
 sleep_positions: [0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
                   0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
-                  -3.14, 3.14, 0, 0]
+                  0, 3.14, 0, 0]
 
 joint_state_publisher:
   update_rate: 30

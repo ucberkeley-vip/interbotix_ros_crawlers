@@ -199,9 +199,11 @@ class HexapodRobot(object):
         elif (msg.stance_cmd == HexJoy.NARROW_STANCE and (self.move_type == "move_turret")): # square button turns on lights in turret mode
             if (self.light_on):
                 GPIO.output(12, GPIO.LOW) #LED light off
+                GPIO.output(16, GPIO.LOW)
                 self.light_on = False
             else:
                 GPIO.output(12, GPIO.HIGH)
+                GPIO.output(16, GPIO.HIGH)
                 self.light_on = True
 
         # Check the reboot_cmd
