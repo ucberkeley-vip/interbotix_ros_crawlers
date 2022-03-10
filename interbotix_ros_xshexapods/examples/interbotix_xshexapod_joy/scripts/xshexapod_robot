@@ -128,24 +128,24 @@ class HexapodRobot(object):
         #     self.update_speed(self.loop_rates["fine"])
 
         # Custom climb buttons
-        if msg.speed_cmd == HexJoy.SPEED_INC:
-            self.walking_node.button1()
-        elif msg.speed_toggle_cmd == HexJoy.SPEED_FINE:
-            self.walking_node.front_legs()
-        elif msg.speed_cmd == HexJoy.SPEED_DEC:
-            self.walking_node.middle_legs()
-        elif msg.speed_toggle_cmd == HexJoy.SPEED_COURSE:
-            self.walking_node.back_legs()
-
-        # Check the leg_toggle_cmd
-        if (msg.leg_toggle_cmd == HexJoy.LEG_NEXT):
-            indx = self.leg_list.index(self.current_leg) + 1
-            if indx == len(self.leg_list): indx = 0
-            self.update_leg(indx)
-        elif (msg.leg_toggle_cmd == HexJoy.LEG_PREVIOUS):
-            indx = self.leg_list.index(self.current_leg) - 1
-            if indx == -1: indx = len(self.leg_list) - 1
-            self.update_leg(indx)
+        # if msg.speed_cmd == HexJoy.SPEED_INC:
+        #     self.walking_node.button1()
+        # elif msg.speed_toggle_cmd == HexJoy.SPEED_FINE:
+        #     self.walking_node.front_legs()
+        # elif msg.speed_cmd == HexJoy.SPEED_DEC:
+        #     self.walking_node.middle_legs()
+        # elif msg.speed_toggle_cmd == HexJoy.SPEED_COURSE:
+        #     self.walking_node.back_legs()
+        #
+        # # Check the leg_toggle_cmd
+        # if (msg.leg_toggle_cmd == HexJoy.LEG_NEXT):
+        #     indx = self.leg_list.index(self.current_leg) + 1
+        #     if indx == len(self.leg_list): indx = 0
+        #     self.update_leg(indx)
+        # elif (msg.leg_toggle_cmd == HexJoy.LEG_PREVIOUS):
+        #     indx = self.leg_list.index(self.current_leg) - 1
+        #     if indx == -1: indx = len(self.leg_list) - 1
+        #     self.update_leg(indx)
 
         # Check the move_type_cmd
         if (msg.move_type_cmd == HexJoy.MOVE_HEXAPOD):
@@ -171,9 +171,11 @@ class HexapodRobot(object):
 
         # Check the pose_cmd
         if (msg.pose_cmd == HexJoy.HOME_POSE):
-            self.update_pose("home")
+            pass
+            #self.update_pose("home")
         elif (msg.pose_cmd == HexJoy.SLEEP_POSE):
-            self.update_pose("sleep")
+            pass
+            #self.update_pose("sleep")
 
         # Check the gait_toggle_cmd
         if (msg.gait_toggle_cmd == HexJoy.GAIT_NEXT):
@@ -217,8 +219,8 @@ class HexapodRobot(object):
         if (msg.set_home_pose_cmd == HexJoy.SET_HOME_POSE):
             foot_points = self.hexbot.hex.get_foot_points()
             T_fb = self.hexbot.hex.get_body_pose()
-            self.hexbot.hex.set_home_foot_points("all", foot_points)
-            self.hexbot.hex.set_home_height(T_fb[2,3])
+            #self.hexbot.hex.set_home_foot_points("all", foot_points)
+            #self.hexbot.hex.set_home_height(T_fb[2,3])
             self.hexbot.pixels.blink(set_all_leds=True, period=100, iterations=self.led_blinks["set_home"])
 
     ## @brief Control loop for moving the hexapod
@@ -283,22 +285,24 @@ class HexapodRobot(object):
             msg = copy.deepcopy(self.joy_msg)
 
         if (self.move_type == "move_hexapod"):
-            move_hexapod_helper(self, msg)
+            pass
+            #move_hexapod_helper(self, msg)
 
         elif (self.move_type == "move_leg"):
-            leg_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_z_cmd]) > 0
-            if (leg_position_changed):
-                command = [0, 0, 0]
-                if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = self.translate_step
-                elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = -self.translate_step
-
-                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = self.translate_step
-                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -self.translate_step
-
-                if (self.joy_msg.place_z_cmd == HexJoy.PLACE_Z_INC): command[2] = self.translate_step
-                elif (self.joy_msg.place_z_cmd == HexJoy.PLACE_Z_DEC): command[2] = -self.translate_step
-
-                self.hexbot.hex.move_leg(self.current_leg, command, self.move_step_time, self.accel_step_time, False)
+            pass
+            # leg_position_changed = sum([msg.world_x_cmd, msg.world_y_cmd, msg.place_z_cmd]) > 0
+            # if (leg_position_changed):
+            #     command = [0, 0, 0]
+            #     if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = self.translate_step
+            #     elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = -self.translate_step
+            #
+            #     if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = self.translate_step
+            #     elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -self.translate_step
+            #
+            #     if (self.joy_msg.place_z_cmd == HexJoy.PLACE_Z_INC): command[2] = self.translate_step
+            #     elif (self.joy_msg.place_z_cmd == HexJoy.PLACE_Z_DEC): command[2] = -self.translate_step
+            #
+            #     self.hexbot.hex.move_leg(self.current_leg, command, self.move_step_time, self.accel_step_time, False)
         elif (self.move_type == "move_algo_ll"):
             pass
         elif (self.move_type == "move_turret"):
@@ -308,10 +312,10 @@ class HexapodRobot(object):
 
             # WORLD_YAW_CW is right trigger button (R2), press and hold for open, release for close
             if (pinch_state_changed and msg.world_yaw_cmd == HexJoy.WORLD_YAW_CW): # R2 trigger is pulled
-                if (self.pinch_closed == True): # pinch valve is closed 
+                if (self.pinch_closed == True): # pinch valve is closed
                     self.pinch_closed = False # flag to open
                     self.hexbot.hex.change_pinch_state(self.move_step_time, self.accel_step_time, False) # command motor to open
-            if (msg.world_yaw_cmd == 0 and self.pinch_closed == False): # trigger not being pulled anymore, if pinch is not closed then close it 
+            if (msg.world_yaw_cmd == 0 and self.pinch_closed == False): # trigger not being pulled anymore, if pinch is not closed then close it
                 self.hexbot.hex.change_pinch_state(self.move_step_time, self.accel_step_time, False)
                 self.pinch_closed = True
             if (turret_position_changed):
