@@ -131,11 +131,11 @@ class HexapodRobot(object):
         if msg.speed_cmd == HexJoy.SPEED_INC:
             self.walking_node.button1()
         elif msg.speed_toggle_cmd == HexJoy.SPEED_FINE:
-            self.walking_node.button2()
+            self.walking_node.front_legs()
         elif msg.speed_cmd == HexJoy.SPEED_DEC:
-            self.walking_node.button3()
+            self.walking_node.middle_legs()
         elif msg.speed_toggle_cmd == HexJoy.SPEED_COURSE:
-            self.walking_node.button4()
+            self.walking_node.back_legs()
 
         # Check the leg_toggle_cmd
         if (msg.leg_toggle_cmd == HexJoy.LEG_NEXT):
@@ -199,9 +199,11 @@ class HexapodRobot(object):
         elif (msg.stance_cmd == HexJoy.NARROW_STANCE and (self.move_type == "move_turret")): # square button turns on lights in turret mode
             if (self.light_on):
                 GPIO.output(12, GPIO.LOW) #LED light off
+                GPIO.output(16, GPIO.LOW)
                 self.light_on = False
             else:
                 GPIO.output(12, GPIO.HIGH)
+                GPIO.output(16, GPIO.HIGH)
                 self.light_on = True
 
         # Check the reboot_cmd
