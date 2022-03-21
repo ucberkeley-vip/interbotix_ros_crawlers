@@ -26,7 +26,7 @@ class HexapodRobot(object):
     def __init__(self):
         self.light_on = False
         self.pinch_closed = True
-        self.rotate_step = 0.02                                                 # Step size [rad] when rotating the hexapod body in place
+        self.rotate_step = 0.01                                                 # Step size [rad] when rotating the hexapod body in place
         self.translate_step = 0.007                                             # Step size [meters] when translating the hexapod body or one of its legs in place
         self.move_type = "move_hexapod"                                         # Either holds 'move_hexapod' or 'move_leg' modes based on controller input
         self.current_loop_rate = 25                                             # Frequency [Hz] at which the 'controller' function is called per second
@@ -84,7 +84,7 @@ class HexapodRobot(object):
     def update_gait(self, gait_indx):
         self.current_gait = self.gait_types[gait_indx]
         rospy.loginfo("Now using the %s gait." % self.current_gait)
-        self.hexbot.pixels.set_color(color=self.led_states[self.current_gait], set_all_leds=True)
+        self.hexbot.pixels.set_color(color=BLUE, set_all_leds=True)
 
     ### @brief Helper function that updates the hexapod's stance to be wider or narrower
     ### @param mod_value - relative distance value by which to tighten or widen the hexapod stance [m]
@@ -100,10 +100,10 @@ class HexapodRobot(object):
     def update_pose(self, pose):
         self.hexbot.pixels.set_color(color=self.led_states["pose"], set_all_leds=True)
         self.hexbot.hex.reset_hexapod(pose)
-        if (self.move_type == "move_hexapod"):
-            self.hexbot.pixels.set_color(color=self.led_states[self.current_gait], set_all_leds=True)
-        elif (self.move_type == "move_leg"):
-            self.hexbot.pixels.set_color(color=self.led_states["leg"], set_all_leds=True)
+        # if (self.move_type == "move_hexapod"):
+        #     self.hexbot.pixels.set_color(color=self.led_states[self.current_gait], set_all_leds=True)
+        # elif (self.move_type == "move_leg"):
+        #     self.hexbot.pixels.set_color(color=self.led_states["leg"], set_all_leds=True)
 
     ### @brief ROS Subscriber Callback for incoming joystick commands
     ### @param msg - ROS message of the HexJoy type
@@ -153,20 +153,24 @@ class HexapodRobot(object):
             self.move_type = "move_hexapod"
             rospy.loginfo("Move Hexapod mode toggled.")
             self.update_gait(self.gait_types.index(self.current_gait))
+            self.hexbot.pixels.set_color(color=BLUE, set_all_leds=True)
         elif (msg.move_type_cmd == HexJoy.MOVE_LEG):
             self.move_type = "move_leg"
             rospy.loginfo("Move Leg mode toggled. Current leg is %s." % self.current_leg)
             self.hexbot.pixels.set_color(color=self.led_states["leg"], set_all_leds=True)
             self.update_leg(self.leg_list.index(self.current_leg))
+            self.hexbot.pixels.set_color(color=RED, set_all_leds=True)
         elif (msg.move_type_cmd == 33): #HexJoy.MOVE_ALGO_LL):
-            #TODO: create HexJoy.MOVE_ALGO_LL
+            
             self.move_type = "move_algo_ll"
             rospy.loginfo("Move_algo_LL mode toggled.")
+            self.hexbot.pixels.set_color(color=MAGENTA, set_all_leds=True)
             pass
         elif (msg.move_type_cmd == 34): #HexJoy.MOVE_TURRET):
             #TODO: create HexJoy.MOVE_TURRET in interbotix_ros_core/interbotix_ros_xseries/interbotix_xs_msgs/msg/HexJoy.msg
             self.move_type = "move_turret"
             rospy.loginfo("Move turret mode toggled.")
+            self.hexbot.pixels.set_color(color=YELLOW, set_all_leds=True)
             pass
 
         # Check the pose_cmd
