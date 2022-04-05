@@ -323,8 +323,8 @@ class HexapodRobot(object):
                 if (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_INC): command[0] = turret_mv_inc # left joystick up/down corresponds to x pos in space
                 elif (self.joy_msg.world_x_cmd == HexJoy.WORLD_X_DEC): command[0] = -turret_mv_inc
 
-                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = turret_mv_inc # left joystick right/left corresponds to y pos in space
-                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -turret_mv_inc
+                if (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_INC): command[1] = 2*turret_mv_inc # left joystick right/left corresponds to y pos in space
+                elif (self.joy_msg.world_y_cmd == HexJoy.WORLD_Y_DEC): command[1] = -2*turret_mv_inc
 
                 if (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_INC): command[2] = turret_mv_inc # right joystick corresponds to z pos in space
                 elif (self.joy_msg.place_x_cmd == HexJoy.PLACE_X_DEC): command[2] = -turret_mv_inc

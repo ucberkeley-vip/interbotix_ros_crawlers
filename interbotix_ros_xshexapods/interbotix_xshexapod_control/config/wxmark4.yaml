@@ -10,7 +10,7 @@ joint_order: [left_back_coxa, left_back_femur, left_back_tibia,
 
 sleep_positions: [0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
                   0, -1.57, 1.57, 0, -1.57, 1.57, 0, -1.57, 1.57,
-                  -3.14, 1.57, 0, 0]
+                  -3.14, 1.57, 0, 1.687]
 
 joint_state_publisher:
   update_rate: 30
@@ -24,6 +24,7 @@ groups:
   right_front: [right_front_coxa, right_front_femur, right_front_tibia]
   right_middle: [right_middle_coxa, right_middle_femur, right_middle_tibia]
   right_back: [right_back_coxa, right_back_femur, right_back_tibia]
+  legs: [left_back_coxa, left_back_femur, left_back_tibia, left_middle_coxa, left_middle_femur, left_middle_tibia, left_front_coxa, left_front_femur, left_front_tibia, right_front_coxa, right_front_femur, right_front_tibia, right_middle_coxa, right_middle_femur, right_middle_tibia, right_back_coxa, right_back_femur, right_back_tibia]
   turret_group: [turret_rot, turret_ext, turret_tilt]
   pinch_group: [turret_pinch]
 
