@@ -7,6 +7,8 @@ from interbotix_xs_msgs.msg import HexJoy
 from interbotix_common_modules import angle_manipulation as ang
 from interbotix_xs_modules.hexapod import InterbotixHexapodXS
 
+from manual_walking.manual_walking_node import ManualWalkingNode
+
 # Color Macros in Hexidecimal (used to control colors on the Neopixels)
 BLUE = 0x0000FF
 RED = 0xFF0000
@@ -49,6 +51,7 @@ class HexapodRobot(object):
         self.move_step_time = rospy.get_param("~move_step_time")                # Passthrough to the 'Profile_Velocity' register specifying the time [s] each motor should spend moving to its goal
         self.accel_step_time = self.move_step_time / 2.0
         self.hexbot = InterbotixHexapodXS(robot_model, robot_name, self.p_gain, False) # Hexapod Module instantiation
+        self.walking_node = ManualWalkingNode(self.hexbot)
         self.update_speed(self.current_loop_rate)
         self.update_gait(self.gait_types.index(self.current_gait))
         rospy.Subscriber("commands/joy_processed", HexJoy, self.joy_control_cb) # ROS Subscriber to get the joystick commands
@@ -104,21 +107,34 @@ class HexapodRobot(object):
         with self.joy_mutex:
             self.joy_msg = copy.deepcopy(msg)
 
-        # Check the speed_cmd
-        if (msg.speed_cmd == HexJoy.SPEED_INC and self.current_loop_rate < 40):
-            self.update_speed(self.current_loop_rate + 1)
-        elif (msg.speed_cmd == HexJoy.SPEED_DEC and self.current_loop_rate > 12):
-            self.update_speed(self.current_loop_rate - 1)
+        # # Check the speed_cmd
+        # if (msg.speed_cmd == HexJoy.SPEED_INC and self.current_loop_rate < 40):
+        #     self.update_speed(self.current_loop_rate + 1)
+        # elif (msg.speed_cmd == HexJoy.SPEED_DEC and self.current_loop_rate > 12):
+        #     self.update_speed(self.current_loop_rate - 1)
 
-        # Check the speed_toggle_cmd
-        if (msg.speed_toggle_cmd == HexJoy.SPEED_COURSE):
-            self.loop_rates["fine"] = self.current_loop_rate
-            rospy.loginfo("Switched to Course Control")
-            self.update_speed(self.loop_rates["course"])
-        elif (msg.speed_toggle_cmd == HexJoy.SPEED_FINE):
-            self.loop_rates["course"] = self.current_loop_rate
-            rospy.loginfo("Switched to Fine Control")
-            self.update_speed(self.loop_rates["fine"])
+        # # Check the speed_toggle_cmd
+        # if (msg.speed_toggle_cmd == HexJoy.SPEED_COURSE):
+        #     self.loop_rates["fine"] = self.current_loop_rate
+        #     rospy.loginfo("Switched to Course Control")
+        #     self.update_speed(self.loop_rates["course"])
+        # elif (msg.speed_toggle_cmd == HexJoy.SPEED_FINE):
+        #     self.loop_rates["course"] = self.current_loop_rate
+        #     rospy.loginfo("Switched to Fine Control")
+        #     self.update_speed(self.loop_rates["fine"])
+        if msg.speed_cmd == HexJoy.SPEED_INC:
+            rospy.loginfo("SPEED_INC was pressed!")
+            self.walking_node.walking_sequence()
+        elif msg.speed_cmd == HexJoy.SPEED_DEC:
+            rospy.loginfo("SPEED_DEC was pressed!")
+            self.walking_node.middle_legs()
+
+        if msg.speed_toggle_cmd == HexJoy.SPEED_FINE:
+            rospy.loginfo("SPEED_FINE was pressed!")
+            self.walking_node.front_legs()
+        elif msg.speed_toggle_cmd == HexJoy.SPEED_COURSE:
+            rospy.loginfo("SPEED_COURSE was pressed!")
+            self.walking_node.back_legs()
 
         # Check the leg_toggle_cmd
         if (msg.leg_toggle_cmd == HexJoy.LEG_NEXT):
